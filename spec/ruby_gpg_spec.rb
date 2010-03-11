@@ -1,6 +1,30 @@
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
 describe "RubyGpg" do
+  def expect_command_to_match(part_of_command)
+    Open3.expects(:popen3).with do |command|
+      case part_of_command
+      when Regexp: command =~ part_of_command
+      when String: command.include?(part_of_command)
+      else raise "Can't match that"
+      end
+    end
+  end
+  
+  def expect_error(error_message)
+    $?.stubs(:exitstatus).returns(1)
+    @stderr.write(error_message)
+    @stderr.rewind
+  end
+
+  before do
+    @stdin = StringIO.new
+    @stdout = StringIO.new
+    @stderr = StringIO.new
+    Open3.stubs(:popen3).yields(@stdin, @stdout, @stderr)
+    $?.stubs(:exitstatus).returns(0)
+  end
+  
   it "allows the use of a custom path to the gpg executable" do
     RubyGpg.config.executable = "/custom/path/to/gpg"
     RubyGpg.gpg_command.should =~ /^\/custom\/path\/to\/gpg/
@@ -18,18 +42,8 @@ describe "RubyGpg" do
     command.should include("--no-tty")
     command.should include("--yes")
   end
-  
+
   describe '.encrypt(filename, recipient)' do
-    def expect_command_to_match(part_of_command)
-      Open3.expects(:popen3).with do |command|
-        case part_of_command
-        when Regexp: command =~ part_of_command
-        when String: command.include?(part_of_command)
-        else raise "Can't match that"
-        end
-      end
-    end
-    
     def run_encrypt
       RubyGpg.encrypt('filename', 'recipient')
     end
@@ -54,27 +68,65 @@ describe "RubyGpg" do
       run_encrypt
     end
     
-    it "save encrypted version to filename.gpg" do
+    it "saves encrypted version to filename.gpg" do
       expect_command_to_match("--output filename.gpg")
       run_encrypt
     end
     
     it "raises any errors from gpg" do
-      stdin = StringIO.new
-      stdout = StringIO.new
-      stderr = StringIO.new("error message")
-      
-      Open3.stubs(:popen3).yields(stdin, stdout, stderr)
-      lambda { run_encrypt }.should raise_error(/GPG command (.*gpg.*--encrypt.*) failed with: error message/)
+      expect_error("error message")  
+      lambda { run_encrypt }.should raise_error(/GPG command \(.*gpg.*--encrypt.*filename\) failed with: error message/)
     end
     
     it "does not raise if there is no output from gpg" do
-      stdin = StringIO.new
-      stdout = StringIO.new
-      stderr = StringIO.new
-      
-      Open3.stubs(:popen3).yields(stdin, stdout, stderr)
       lambda { run_encrypt }.should_not raise_error
+    end
+  end
+  
+  describe '.decrypt(filename)' do
+    def run_decrypt(passphrase = nil)
+      RubyGpg.decrypt('filename.gpg', passphrase)
+    end
+    
+    it "uses the configured gpg command" do
+      expect_command_to_match(/^#{Regexp.escape(RubyGpg.gpg_command)}/)
+      run_decrypt
+    end
+    
+    it "issues a decrypt command to gpg" do
+      expect_command_to_match("--decrypt")
+      run_decrypt
+    end
+    
+    it "accepts an optional passphrase" do
+      expect_command_to_match("--passphrase secret")
+      run_decrypt("secret")
+    end
+
+    it "issues the decrypt command for the passed filename" do
+      expect_command_to_match(/filename\.gpg$/)
+      run_decrypt
+    end
+    
+    it "saves decrypted version to filename without .gpg extension" do
+      expect_command_to_match("--output filename")
+      run_decrypt
+    end
+    
+    it "raises any errors from gpg" do
+      expect_error("error message")
+      lambda { run_decrypt }.should raise_error(/GPG command \(.*gpg.*--decrypt.*filename\.gpg\) failed with: error message/)
+    end
+    
+    it "does not raise if there is no output from gpg" do
+      lambda { run_decrypt }.should_not raise_error
+    end
+    
+    it "does not raise when gpg spits 'successful' output to stderr" do
+      $?.stubs(:exitstatus).returns(0)
+      @stderr.write("success message")
+      @stderr.rewind
+      lambda { run_decrypt }.should_not raise_error
     end
   end
 end
