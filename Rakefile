@@ -13,6 +13,7 @@ begin
     gem.add_development_dependency "rspec", ">= 1.2.9"
     gem.add_development_dependency "yard", ">= 0"
     gem.add_development_dependency "cucumber", ">= 0"
+    gem.add_development_dependency "mocha", ">= 0.9.8"
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
   Jeweler::GemcutterTasks.new
