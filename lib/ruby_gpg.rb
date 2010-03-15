@@ -15,7 +15,7 @@ module RubyGpg
   
   def encrypt(file, recipient)
     command = "#{gpg_command} --output #{file}.gpg" +
-              " --recipient #{recipient} --encrypt #{file}"
+              " --recipient \"#{recipient}\" --encrypt #{file}"
     run_command(command)
   end
   
@@ -23,8 +23,9 @@ module RubyGpg
   def run_command(command)
     Open3.popen3(command) do |stdin, stdout, stderr|
       stdin.close_write
-      if errors = stderr.read
-        raise errors
+      errors = stderr.read
+      if errors && !errors.empty?
+        raise "GPG command (#{command}) failed with: #{errors}"
       end
     end
   end

@@ -50,7 +50,7 @@ describe "RubyGpg" do
     end
     
     it "issues the encrypts command for the passed recipient" do
-      expect_command_to_match("--recipient recipient")
+      expect_command_to_match("--recipient \"recipient\"")
       run_encrypt
     end
     
@@ -65,7 +65,16 @@ describe "RubyGpg" do
       stderr = StringIO.new("error message")
       
       Open3.stubs(:popen3).yields(stdin, stdout, stderr)
-      lambda { run_encrypt }.should raise_error(/error message/)
+      lambda { run_encrypt }.should raise_error(/GPG command (.*gpg.*--encrypt.*) failed with: error message/)
+    end
+    
+    it "does not raise if there is no output from gpg" do
+      stdin = StringIO.new
+      stdout = StringIO.new
+      stderr = StringIO.new
+      
+      Open3.stubs(:popen3).yields(stdin, stdout, stderr)
+      lambda { run_encrypt }.should_not raise_error
     end
   end
 end

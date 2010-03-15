@@ -4,6 +4,8 @@ Feature: Encryption
   I want to encrypt the file
 
   Scenario: Encrypt
-    Given a file containing "some content"
-    When I encrypt the file for "recipient"
-    Then the file should not contain "some content"
+    Given a file named "secrets" containing "some content"
+    And the file "secrets.gpg" does not exist
+    When I encrypt the file "secrets" for "Slow Joe Crow"
+    Then the file "secrets.gpg" should exist
+    And the file "secrets.gpg" should not contain "some content"
