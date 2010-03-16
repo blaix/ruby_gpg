@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{ruby_gpg}
-  s.version = "0.1.0"
+  s.version = "0.1.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Justin Blake"]
@@ -19,6 +19,7 @@ Gem::Specification.new do |s|
   s.files = [
     ".autotest",
      ".gitignore",
+     "CHANGELOG.markdown",
      "LICENSE",
      "README.markdown",
      "Rakefile",
@@ -29,6 +30,7 @@ Gem::Specification.new do |s|
      "features/step_definitions/ruby_gpg_steps.rb",
      "features/support/env.rb",
      "lib/ruby_gpg.rb",
+     "ruby_gpg.gemspec",
      "spec/ruby_gpg_spec.rb",
      "spec/spec.opts",
      "spec/spec_helper.rb",
