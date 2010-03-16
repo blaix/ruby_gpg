@@ -18,6 +18,8 @@ coverage
 rdoc
 pkg
 tmp
+doc
+.yardoc
 
 ## PROJECT::SPECIFIC
 test_keys/random_seed
