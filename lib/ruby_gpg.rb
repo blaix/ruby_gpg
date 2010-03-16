@@ -9,7 +9,7 @@ module RubyGpg
   end
 
   def gpg_command
-    "#{config.executable} --homedir #{config.homedir}" +
+    "#{config.executable} --homedir #{config.homedir} --quiet" +
     " --no-secmem-warning --no-permission-warning --no-tty --yes"
   end
   
@@ -30,12 +30,9 @@ module RubyGpg
   private
   def run_command(command)
     Open3.popen3(command) do |stdin, stdout, stderr|
-      stdin.close_write
-      unless $?.exitstatus == 0
-        msg = "GPG command (#{command}) failed"
-        errors = stderr.read
-        msg << " with: #{errors}" if errors && !errors.empty?
-        raise msg
+      error = stderr.read
+      if error && !error.empty?
+        raise "GPG command (#{command}) failed with: #{error}"
       end
     end
   end

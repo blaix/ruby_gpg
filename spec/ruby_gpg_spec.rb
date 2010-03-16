@@ -12,7 +12,6 @@ describe "RubyGpg" do
   end
   
   def stub_error(error_message)
-    $?.stubs(:exitstatus).returns(1)
     @stderr.write(error_message)
     @stderr.rewind
   end
@@ -22,7 +21,6 @@ describe "RubyGpg" do
     @stdout = StringIO.new
     @stderr = StringIO.new
     Open3.stubs(:popen3).yields(@stdin, @stdout, @stderr)
-    $?.stubs(:exitstatus).returns(0)
   end
   
   it "allows the use of a custom path to the gpg executable" do
@@ -40,6 +38,7 @@ describe "RubyGpg" do
     command.should include("--no-secmem-warning")
     command.should include("--no-permission-warning")
     command.should include("--no-tty")
+    command.should include("--quiet")
     command.should include("--yes")
   end
 
@@ -119,13 +118,6 @@ describe "RubyGpg" do
     end
     
     it "does not raise if there is no output from gpg" do
-      lambda { run_decrypt }.should_not raise_error
-    end
-    
-    it "does not raise when gpg spits 'successful' output to stderr" do
-      $?.stubs(:exitstatus).returns(0)
-      @stderr.write("success message")
-      @stderr.rewind
       lambda { run_decrypt }.should_not raise_error
     end
   end

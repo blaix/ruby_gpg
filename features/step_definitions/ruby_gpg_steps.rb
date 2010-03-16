@@ -10,7 +10,7 @@ Given /^a file named "([^\"]*)" containing "([^\"]*)"$/ do |filename, content|
 end
 
 Given /^the file "([^\"]*)" does not exist$/ do |filename|
-  if File.exist?(filename)
+  if File.exist?("#{TMP_PATH}/#{filename}")
     File.delete("#{TMP_PATH}/#{filename}")
   end
 end
@@ -19,12 +19,26 @@ When /^I encrypt the file "([^\"]*)" for "([^\"]*)"$/ do |filename, recipient|
   RubyGpg.encrypt("#{TMP_PATH}/#{filename}", recipient)
 end
 
+When /^I try to encrypt the file "([^\"]*)" for "([^\"]*)"$/ do |filename, recipient|
+  @command = lambda {
+    RubyGpg.encrypt("#{TMP_PATH}/#{filename}", recipient)
+  }
+end
+
 When /^I decrypt the file "([^\"]*)" with passphrase "([^\"]*)"$/ do |filename, passphrase|
   RubyGpg.decrypt("#{TMP_PATH}/#{filename}", passphrase)
 end
 
+Then /^the command should raise an error matching "([^\"]*)"$/ do |error|
+  @command.should raise_error(/#{Regexp.escape(error)}/)
+end
+
 Then /^the file "([^\"]*)" should exist$/ do |filename|
   File.exist?("#{TMP_PATH}/#{filename}").should be_true
+end
+
+Then /^the file "([^\"]*)" should not exist$/ do |filename|
+  File.exist?("#{TMP_PATH}/#{filename}").should_not be_true
 end
 
 Then /^the file "([^\"]*)" should not contain "([^\"]*)"$/ do |filename, content|
