@@ -11,7 +11,7 @@ describe "RubyGpg" do
     end
   end
   
-  def expect_error(error_message)
+  def stub_error(error_message)
     $?.stubs(:exitstatus).returns(1)
     @stderr.write(error_message)
     @stderr.rewind
@@ -74,7 +74,7 @@ describe "RubyGpg" do
     end
     
     it "raises any errors from gpg" do
-      expect_error("error message")  
+      stub_error("error message")  
       lambda { run_encrypt }.should raise_error(/GPG command \(.*gpg.*--encrypt.*filename\) failed with: error message/)
     end
     
@@ -114,7 +114,7 @@ describe "RubyGpg" do
     end
     
     it "raises any errors from gpg" do
-      expect_error("error message")
+      stub_error("error message")
       lambda { run_decrypt }.should raise_error(/GPG command \(.*gpg.*--decrypt.*filename\.gpg\) failed with: error message/)
     end
     
