@@ -15,6 +15,14 @@ Given /^the file "([^\"]*)" does not exist$/ do |filename|
   end
 end
 
+Given /^I read the file "([^\"]*)" to a string$/ do |filename|
+  @string = File.read("#{TMP_PATH}/#{filename}")
+end
+
+Given /^the string should not be "([^\"]*)"$/ do |string|
+  @string.strip.should_not == string.strip
+end
+
 When /^I encrypt the file "([^\"]*)" for "([^\"]*)"$/ do |filename, recipient|
   RubyGpg.encrypt("#{TMP_PATH}/#{filename}", recipient)
 end
@@ -27,6 +35,10 @@ end
 
 When /^I decrypt the file "([^\"]*)" with passphrase "([^\"]*)"$/ do |filename, passphrase|
   RubyGpg.decrypt("#{TMP_PATH}/#{filename}", passphrase)
+end
+
+When /^I decrypt the string with passphrase "([^\"]*)"$/ do |passphrase|
+  @string = RubyGpg.decrypt_string(@string, passphrase)
 end
 
 Then /^the command should raise an error matching "([^\"]*)"$/ do |error|
@@ -47,4 +59,8 @@ end
 
 Then /^the file "([^\"]*)" should contain "([^\"]*)"$/ do |filename, content|
   File.read("#{TMP_PATH}/#{filename}").should include(content)
+end
+
+Then /^the string should be "([^\"]*)"$/ do |string|
+  string.strip.should == string.strip
 end

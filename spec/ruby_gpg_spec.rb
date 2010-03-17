@@ -121,4 +121,45 @@ describe "RubyGpg" do
       lambda { run_decrypt }.should_not raise_error
     end
   end
+
+  describe '.decrypt_string(string)' do
+    def run_decrypt_string(passphrase = nil)
+      RubyGpg.decrypt_string('encrypted string', passphrase)
+    end
+    
+    it "uses the configured gpg command" do
+      expect_command_to_match(/^#{Regexp.escape(RubyGpg.gpg_command)}/)
+      run_decrypt_string
+    end
+    
+    it "issues a decrypt command to gpg" do
+      expect_command_to_match("--decrypt")
+      run_decrypt_string
+    end
+    
+    it "accepts an optional passphrase" do
+      expect_command_to_match("--passphrase secret")
+      run_decrypt_string("secret")
+    end
+    
+    it "sends the passed string as stdin" do
+      @stdin.expects(:write).with("encrypted string")
+      run_decrypt_string
+    end
+    
+    it "returns the decrypted string" do
+      @stdout.write("decrypted string")
+      @stdout.rewind
+      run_decrypt_string.should == "decrypted string"
+    end
+    
+    it "raises any errors from gpg" do
+      stub_error("error message")
+      lambda { run_decrypt_string }.should raise_error(/GPG command \(.*gpg.*--decrypt.*\) failed with: error message/)
+    end
+    
+    it "does not raise if there is no output from gpg" do
+      lambda { run_decrypt_string }.should_not raise_error
+    end
+  end
 end

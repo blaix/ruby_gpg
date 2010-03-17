@@ -27,13 +27,25 @@ module RubyGpg
     run_command(command)
   end
   
+  def decrypt_string(string, passphrase = nil)
+    command = gpg_command.dup
+    command << " --passphrase #{passphrase}" if passphrase
+    command << " --decrypt"
+    run_command(command, string)
+  end
+  
   private
-  def run_command(command)
+  def run_command(command, input = nil)
+    output = ""
     Open3.popen3(command) do |stdin, stdout, stderr|
+      stdin.write(input) if input
+      stdin.close_write
+      output << stdout.read
       error = stderr.read
       if error && !error.empty?
         raise "GPG command (#{command}) failed with: #{error}"
       end
     end
+    output
   end
 end
