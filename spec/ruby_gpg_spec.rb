@@ -130,7 +130,9 @@ describe "RubyGpg" do
     end
     
     it "saves decrypted version to filename without .gpg extension" do
-      expect_command_to_match("--output filename")
+      # Note the space after "filename". Without the space it is possible that
+      # the file extention still exists
+      expect_command_to_match("--output filename ")
       run_decrypt
     end
     
@@ -144,6 +146,20 @@ describe "RubyGpg" do
     end
   end
 
+  describe '.decrypt(filename) for asc file' do
+    def run_decrypt(passphrase = nil, opts = {})
+      RubyGpg.decrypt('filename.asc', passphrase, opts)
+    end
+    
+    it "issues the decrypt command for the ascii filename" do
+      # Note the space after "filename". Without the space it is possible that
+      # the file extention still exists
+      expect_command_to_match("--output filename ")
+      run_decrypt
+    end
+
+  end
+  
   describe '.decrypt_string(string)' do
     def run_decrypt_string(passphrase = nil)
       RubyGpg.decrypt_string('encrypted string', passphrase)

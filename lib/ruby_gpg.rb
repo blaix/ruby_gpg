@@ -28,8 +28,8 @@ module RubyGpg
     run_command(command)
   end
   
-  def decrypt(file, passphrase = nil)
-    outfile = file.gsub(/\.gpg$/, '')
+  def decrypt(file, passphrase = nil, opts = {})
+    outfile = file.gsub(/\.gpg$|\.asc$/, '')
     command = "#{gpg_command} --output #{outfile}"
     command << " --passphrase #{passphrase}" if passphrase
     command << " --decrypt #{file}"
