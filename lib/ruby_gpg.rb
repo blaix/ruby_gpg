@@ -13,9 +13,18 @@ module RubyGpg
     " --no-secmem-warning --no-permission-warning --no-tty --yes"
   end
   
-  def encrypt(file, recipient)
-    command = "#{gpg_command} --output #{file}.gpg" +
+  def encrypt(file, recipient, opts = {})
+    options = {
+      :armor => false
+    }.merge(opts)
+    
+    output = output_filename(file, options)
+    
+    ascii = options[:armor] == true ? "-a " : ""
+    
+    command = "#{gpg_command} #{ascii}--output #{output}" +
               " --recipient \"#{recipient}\" --encrypt #{file}"
+    
     run_command(command)
   end
   
@@ -35,6 +44,7 @@ module RubyGpg
   end
   
   private
+  
   def run_command(command, input = nil)
     output = ""
     Open3.popen3(command) do |stdin, stdout, stderr|
@@ -48,4 +58,11 @@ module RubyGpg
     end
     output
   end
+  
+  # Return the output filename to use
+  def output_filename(file, opts)
+    extension = opts[:armor] ? "asc" : "gpg"
+    opts[:output].nil? ? "#{file}.#{extension}" : opts[:output]
+  end
+  
 end

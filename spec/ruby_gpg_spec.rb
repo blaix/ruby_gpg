@@ -82,6 +82,28 @@ describe "RubyGpg" do
     end
   end
   
+  describe '.encrypt(filename, recipient, opts) with armor specified' do
+    def run_encrypt
+      RubyGpg.encrypt('filename', 'recipient', {:armor => true})
+    end
+    
+    it "saves armored version to filename.asc" do
+      expect_command_to_match("-a --output filename.asc")
+      run_encrypt
+    end
+  end
+  
+  describe '.encrypt(filename, recipient, opts) with ascii output file specified' do
+    def run_encrypt
+      RubyGpg.encrypt('filename', 'recipient', {:armor => true, :output => "foo.asc"})
+    end
+    
+    it "saves armored version to foo.asc" do
+      expect_command_to_match("-a --output foo.asc")
+      run_encrypt
+    end
+  end
+  
   describe '.decrypt(filename)' do
     def run_decrypt(passphrase = nil)
       RubyGpg.decrypt('filename.gpg', passphrase)
