@@ -157,6 +157,11 @@ describe "RubyGpg" do
       expect_command_to_match("--output filename ")
       run_decrypt
     end
+    
+    it "issues the decrypt command for the filename passed in options" do
+      expect_command_to_match("--output foo.txt ")
+      run_decrypt(nil, {:output => "foo.txt"})
+    end
 
   end
   
