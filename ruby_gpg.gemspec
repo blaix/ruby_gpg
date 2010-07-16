@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{ruby_gpg}
-  s.version = "0.2.0"
+  s.version = "0.3.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Justin Blake"]
-  s.date = %q{2010-03-17}
+  s.date = %q{2010-07-16}
   s.description = %q{Ruby wrapper for the gpg binary}
   s.email = %q{justin@megablaix.com}
   s.extra_rdoc_files = [
@@ -42,7 +42,7 @@ Gem::Specification.new do |s|
   s.homepage = %q{http://github.com/blaix/ruby_gpg}
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.3.6}
+  s.rubygems_version = %q{1.3.5}
   s.summary = %q{Ruby wrapper for the gpg binary}
   s.test_files = [
     "spec/ruby_gpg_spec.rb",
