@@ -104,6 +104,39 @@ describe "RubyGpg" do
     end
   end
   
+  describe '.encrypt_string(string, recipient, opts)' do
+    def run_encrypt_string
+      RubyGpg.encrypt_string("string to encrypt", "recipient")
+    end
+    
+    it "uses the configured gpg command" do
+      expect_command_to_match(/^#{Regexp.escape(RubyGpg.gpg_command)}/)
+      run_encrypt_string
+    end
+    
+    it "issues an encrypt command to gpg" do
+      expect_command_to_match("--encrypt")
+      run_encrypt_string
+    end
+    
+    it "issues the encrypts command for the passed recipient" do
+      expect_command_to_match("--recipient \"recipient\"")
+      run_encrypt_string
+    end
+    
+    it "sends the passed string as stdin" do
+      @stdin.expects(:write).with('string to encrypt')
+      run_encrypt_string
+    end
+    
+    it "returns the encrypted string" do
+      @stdout.write("encrypted string")
+      @stdout.rewind
+      run_encrypt_string.should == "encrypted string"
+    end
+    
+  end
+  
   describe '.decrypt(filename)' do
     def run_decrypt(passphrase = nil)
       RubyGpg.decrypt('filename.gpg', passphrase)

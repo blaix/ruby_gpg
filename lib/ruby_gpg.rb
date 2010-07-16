@@ -28,6 +28,15 @@ module RubyGpg
     run_command(command)
   end
   
+  # Encrypt a string from stdin
+  def encrypt_string(string, recipient, opts = {})
+    command = gpg_command.dup
+    command << " -a" if opts[:armor]
+    command << " --encrypt"
+    command << " --recipient \"#{recipient}\""
+    run_command(command, string)
+  end
+  
   def decrypt(file, passphrase = nil, opts = {})
     outfile = opts[:output].nil? ? file.gsub(/\.gpg$|\.asc$/, '') : opts[:output]
     command = "#{gpg_command} --output #{outfile}"
