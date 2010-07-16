@@ -27,6 +27,11 @@ for some reason, I guess you have to settle for this.
 For more details, see the
 [RDocs](http://rdoc.info/projects/blaix/ruby_gpg).
 
+## Credits
+
+Scott and Divya of [gitcaps](http://github.com/gitcapps) added some sorely
+missing features. Thanks, guys.
+
 ## Copyright
 
 Copyright (c) 2010 Justin Blake. See LICENSE for details.
