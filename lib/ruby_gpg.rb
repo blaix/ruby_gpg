@@ -29,11 +29,13 @@ module RubyGpg
   end
   
   # Encrypt a string from stdin
-  def encrypt_string(string, recipient, opts = {})
+  def encrypt_string(string, recipients, opts = {})
     command = gpg_command.dup
     command << " -a" if opts[:armor]
     command << " --encrypt"
-    command << " --recipient \"#{recipient}\""
+    [recipients].flatten.each do |r|
+      command << " --recipient \"#{r}\""
+    end
     run_command(command, string)
   end
   
