@@ -13,7 +13,7 @@ module RubyGpg
     " --no-secmem-warning --no-permission-warning --no-tty --yes"
   end
   
-  def encrypt(file, recipient, opts = {})
+  def encrypt(file, recipients, opts = {})
     options = {
       :armor => false
     }.merge(opts)
@@ -23,7 +23,11 @@ module RubyGpg
     ascii = options[:armor] == true ? "-a " : ""
     
     command = "#{gpg_command} #{ascii}--output #{output}" +
-              " --recipient \"#{recipient}\" --encrypt #{file}"
+              " --encrypt #{file}"
+
+    [recipients].flatten.each do |r|
+    command += " --recipient \"#{r}\""
+    end
     
     run_command(command)
   end
