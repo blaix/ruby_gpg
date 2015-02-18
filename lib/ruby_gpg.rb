@@ -58,7 +58,7 @@ module RubyGpg
     output = ""
     Open3.popen3(command) do |stdin, stdout, stderr|
       stdin.write(input) if input
-      stdin.close_write
+      stdin.close
       output << stdout.read
       error = stderr.read
       if error && !error.empty?
