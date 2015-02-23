@@ -22,11 +22,11 @@ module RubyGpg
     
     ascii = options[:armor] == true ? "-a " : ""
     
-    command = "#{gpg_command} #{ascii}--output #{output}" +
-              " --encrypt #{file}"
+    command = "#{gpg_command} #{ascii}--output #{output}"
 
     [recipients].flatten.each do |r|
     command += " --recipient \"#{r}\""
+    command += " --encrypt #{file}"
     end
     
     run_command(command)
