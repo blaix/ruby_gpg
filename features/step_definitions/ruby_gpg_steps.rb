@@ -20,7 +20,7 @@ Given /^I read the file "([^\"]*)" to a string$/ do |filename|
 end
 
 Given /^the string should not be "([^\"]*)"$/ do |string|
-  @string.strip.should_not == string.strip
+  @string.encode('UTF-8', 'binary', invalid: :replace, undef: :replace, replace: '').strip.should_not == string.strip
 end
 
 When /^I encrypt the file "([^\"]*)" for "([^\"]*)"$/ do |filename, recipient|
