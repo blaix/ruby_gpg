@@ -3,7 +3,8 @@ require 'ruby_gpg'
 
 require 'rspec/expectations'
 
-TMP_PATH = File.dirname(__FILE__) + '/../../tmp'
+require 'tmpdir'
+TMP_PATH = Dir.mktmpdir('cucumber')
 
 class Object
   def true?
