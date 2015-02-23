@@ -1,13 +1,17 @@
 language: ruby
-sudo: false
+sudo: true
 cache: bundler
+install:
+  - sudo apt-get install gnupg
+  - bundle install
 script:
-- bundle exec rake spec
+  - bundle exec rake spec
+  - bundle exec rake features
 rvm:
-- 1.8.7
-- 1.9.3
-- 2.1.5
-- jruby
+  - 1.8.7
+  - 1.9.3
+  - 2.1.5
+  - jruby
 matrix:
   fast_finish: true
 notifications:
