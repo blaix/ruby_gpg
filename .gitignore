@@ -20,6 +20,7 @@ pkg
 tmp
 doc
 .yardoc
+Gemfile.lock
 
 ## PROJECT::SPECIFIC
 test_keys/random_seed
