@@ -4,9 +4,12 @@ describe "RubyGpg" do
   def expect_command_to_match(part_of_command)
     Open3.expects(:popen3).with do |command|
       case part_of_command
-      when Regexp: command =~ part_of_command
-      when String: command.include?(part_of_command)
-      else raise "Can't match that"
+      when Regexp
+        command =~ part_of_command
+      when String
+        command.include?(part_of_command)
+      else
+        raise "Can't match that"
       end
     end
   end

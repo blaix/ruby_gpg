@@ -1,9 +1,10 @@
 $LOAD_PATH.unshift(File.dirname(__FILE__) + '/../../lib')
 require 'ruby_gpg'
 
-require 'spec/expectations'
+require 'rspec/expectations'
 
-TMP_PATH = File.dirname(__FILE__) + '/../../tmp'
+require 'tmpdir'
+TMP_PATH = Dir.mktmpdir('cucumber')
 
 class Object
   def true?
