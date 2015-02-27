@@ -29,7 +29,9 @@ For more details, see the
 
 ## Credits
 
-Scott and Divya of [gitcaps](http://github.com/gitcapps) added some sorely
+* [Raphaël Pinson](https://github.com/raphink) modernized things and added some
+features. Thanks.
+* Scott and Divya of [gitcaps](http://github.com/gitcapps) added some sorely
 missing features. Thanks, guys.
 
 ## Copyright
