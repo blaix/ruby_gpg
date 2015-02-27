@@ -1,26 +1,6 @@
 require 'rubygems'
 require 'rake'
 
-begin
-  require 'jeweler'
-  Jeweler::Tasks.new do |gem|
-    gem.name = "ruby_gpg"
-    gem.summary = %Q{Ruby wrapper for the gpg binary}
-    gem.description = %Q{Ruby wrapper for the gpg binary}
-    gem.email = "justin@megablaix.com"
-    gem.homepage = "http://github.com/blaix/ruby_gpg"
-    gem.authors = ["Justin Blake"]
-    gem.add_development_dependency "rspec", ">= 1.2.9"
-    gem.add_development_dependency "yard", ">= 0"
-    gem.add_development_dependency "cucumber", ">= 0"
-    gem.add_development_dependency "mocha", ">= 0.9.8"
-    # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
-  end
-  Jeweler::GemcutterTasks.new
-rescue LoadError
-  puts "Jeweler (or a dependency) not available. Install it with: gem install jeweler"
-end
-
 require 'rspec/core/rake_task'
 RSpec::Core::RakeTask.new(:spec) do |spec|
   spec.pattern = 'spec/**/*_spec.rb'
