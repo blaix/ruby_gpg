@@ -1,6 +1,21 @@
 require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
 describe "RubyGpg" do
+  class MockProcessStatus
+    attr_accessor :exitstatus
+    def initialize(exitstatus)
+      @exitstatus = exitstatus
+    end
+  end
+  
+  class MockProcessThread
+    attr_accessor :pid, :value
+    @pid = 1
+    def initialize(exitstatus)
+      @value = MockProcessStatus.new(exitstatus)
+    end
+  end
+  
   def expect_command_to_match(part_of_command)
     Open3.expects(:popen3).with do |command|
       case part_of_command
@@ -18,12 +33,17 @@ describe "RubyGpg" do
     @stderr.write(error_message)
     @stderr.rewind
   end
-
+  
+  def stub_exitstatus(exitstatus)
+    @thread.value.exitstatus = exitstatus
+  end
+  
   before do
     @stdin = StringIO.new
     @stdout = StringIO.new
     @stderr = StringIO.new
-    Open3.stubs(:popen3).yields(@stdin, @stdout, @stderr)
+    @thread = MockProcessThread.new(0)
+    Open3.stubs(:popen3).yields(@stdin, @stdout, @stderr, @thread)
   end
   
   it "allows the use of a custom path to the gpg executable" do
@@ -76,11 +96,13 @@ describe "RubyGpg" do
     end
     
     it "raises any errors from gpg" do
-      stub_error("error message")  
+      stub_error("error message")
+      stub_exitstatus(1)
       lambda { run_encrypt }.should raise_error(/GPG command \(.*gpg.*--encrypt.*filename\) failed with: error message/)
     end
     
-    it "does not raise if there is no output from gpg" do
+    it "does not raise if gpg exit status is 0" do
+      stub_error("error message")
       lambda { run_encrypt }.should_not raise_error
     end
   end
@@ -174,10 +196,12 @@ describe "RubyGpg" do
     
     it "raises any errors from gpg" do
       stub_error("error message")
+      stub_exitstatus(1)
       lambda { run_decrypt }.should raise_error(/GPG command \(.*gpg.*--decrypt.*filename\.gpg\) failed with: error message/)
     end
     
-    it "does not raise if there is no output from gpg" do
+    it "does not raise if gpg exits with 0" do
+      stub_error("error message")
       lambda { run_decrypt }.should_not raise_error
     end
   end
@@ -234,10 +258,12 @@ describe "RubyGpg" do
     
     it "raises any errors from gpg" do
       stub_error("error message")
+      stub_exitstatus(1)
       lambda { run_decrypt_string }.should raise_error(/GPG command \(.*gpg.*--decrypt.*\) failed with: error message/)
     end
     
-    it "does not raise if there is no output from gpg" do
+    it "does not raise if gpg exitstatus is 0" do
+      stub_error("error message")
       lambda { run_decrypt_string }.should_not raise_error
     end
   end
