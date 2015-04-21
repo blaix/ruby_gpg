@@ -1,3 +1,8 @@
+# v0.3.2 (2015-04-21)
+
+* Check exit status instead of contents of stderr (e97bea52)
+* Stop using jeweler to manage gemspec and releases (978a6124)
+
 # v0.3.1 (2014-02-27)
 
 * Make it work in jruby (2916bbba92d1b9a4fd2847883ed27c77617295a5)
