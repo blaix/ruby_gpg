@@ -62,5 +62,5 @@ Then /^the file "([^\"]*)" should contain "([^\"]*)"$/ do |filename, content|
 end
 
 Then /^the string should be "([^\"]*)"$/ do |string|
-  string.strip.should == string.strip
+  @string.strip.should == string.strip
 end
