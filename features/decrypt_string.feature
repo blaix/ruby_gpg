@@ -8,6 +8,6 @@ Feature: Decrypt String
     And a file named "secrets" containing "some content"
     And I encrypt the file "secrets" for "Slow Joe Crow"
     And I read the file "secrets.gpg" to a string
-    And the string should not be "secrets"
+    And the string should not be "some content"
     When I decrypt the string with passphrase "test"
-    Then the string should be "secrets"
+    Then the string should be "some content"

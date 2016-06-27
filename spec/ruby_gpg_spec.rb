@@ -8,16 +8,8 @@ describe "RubyGpg" do
     end
   end
   
-  class MockProcessThread
-    attr_accessor :pid, :value
-    @pid = 1
-    def initialize(exitstatus)
-      @value = MockProcessStatus.new(exitstatus)
-    end
-  end
-  
   def expect_command_to_match(part_of_command)
-    Open3.expects(:popen3).with do |command|
+    Open3.expects(:capture3).with do |command, opts|
       case part_of_command
       when Regexp
         command =~ part_of_command
@@ -26,24 +18,30 @@ describe "RubyGpg" do
       else
         raise "Can't match that"
       end
-    end
+    end.returns(@result)
   end
   
-  def stub_error(error_message)
-    @stderr.write(error_message)
-    @stderr.rewind
+  def expect_input_string_to_eq(string)
+    Open3.expects(:capture3).with do |command, opts|
+      opts[:stdin_data] == string
+    end.returns(@result)
+  end
+  
+  def stub_output(output)
+    @result[0] = output
+  end
+  
+  def stub_error(error)
+    @result[1] = error
   end
   
   def stub_exitstatus(exitstatus)
-    @thread.value.exitstatus = exitstatus
+    @result[2] = MockProcessStatus.new(exitstatus)
   end
   
   before do
-    @stdin = StringIO.new
-    @stdout = StringIO.new
-    @stderr = StringIO.new
-    @thread = MockProcessThread.new(0)
-    Open3.stubs(:popen3).yields(@stdin, @stdout, @stderr, @thread)
+    @result = ["", "", MockProcessStatus.new(0)]
+    Open3.stubs(:capture3).returns(@result)
   end
   
   it "allows the use of a custom path to the gpg executable" do
@@ -150,13 +148,12 @@ describe "RubyGpg" do
     end
     
     it "sends the passed string as stdin" do
-      @stdin.expects(:write).with('string to encrypt')
+      expect_input_string_to_eq("string to encrypt")
       run_encrypt_string
     end
     
     it "returns the encrypted string" do
-      @stdout.write("encrypted string")
-      @stdout.rewind
+      stub_output("encrypted string")
       run_encrypt_string.should == "encrypted string"
     end
     
@@ -246,13 +243,12 @@ describe "RubyGpg" do
     end
     
     it "sends the passed string as stdin" do
-      @stdin.expects(:write).with("encrypted string")
+      expect_input_string_to_eq("encrypted string")
       run_decrypt_string
     end
     
     it "returns the decrypted string" do
-      @stdout.write("decrypted string")
-      @stdout.rewind
+      stub_output("decrypted string")
       run_decrypt_string.should == "decrypted string"
     end
     

@@ -55,16 +55,11 @@ module RubyGpg
   private
   
   def run_command(command, input = nil)
-    output = ""
-    Open3.popen3(command) do |stdin, stdout, stderr, wait_thr|
-      stdin.write(input) if input
-      stdin.close
-      output << stdout.read
-      exitcode = wait_thr.value.exitstatus
-      error = stderr.read
-      if exitcode != 0
-        raise "GPG command (#{command}) failed with: #{error}"
-      end
+    opts = { binmode: true }
+    opts[:stdin_data] = input if input
+    output, error, status = Open3.capture3(command, opts)
+    if status.exitstatus != 0
+      raise "GPG command (#{command}) failed with: #{error}"
     end
     output
   end
