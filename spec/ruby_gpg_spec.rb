@@ -9,12 +9,13 @@ describe "RubyGpg" do
   end
   
   def expect_command_to_match(part_of_command)
-    Open3.expects(:capture3).with do |command, opts|
+    Open3.expects(:capture3).with do |*command, _opts|
+      command_str = command.join(' ')
       case part_of_command
       when Regexp
-        command =~ part_of_command
+        expect(command_str).to match part_of_command
       when String
-        command.include?(part_of_command)
+        expect(command_str).to include part_of_command
       else
         raise "Can't match that"
       end
@@ -22,8 +23,8 @@ describe "RubyGpg" do
   end
   
   def expect_input_string_to_eq(string)
-    Open3.expects(:capture3).with do |command, opts|
-      opts[:stdin_data] == string
+    Open3.expects(:capture3).with do |*_command, opts|
+      expect(opts[:stdin_data]).to eq string
     end.returns(@result)
   end
   
@@ -84,7 +85,7 @@ describe "RubyGpg" do
     end
     
     it "issues the encrypts command for the passed recipient" do
-      expect_command_to_match("--recipient \"recipient\"")
+      expect_command_to_match("--recipient recipient")
       run_encrypt
     end
     
@@ -112,6 +113,17 @@ describe "RubyGpg" do
     
     it "saves armored version to filename.asc" do
       expect_command_to_match("-a --output filename.asc")
+      run_encrypt
+    end
+  end
+
+  describe '.encrypt(filename, recipient, opts) with trust-model' do
+    def run_encrypt
+      RubyGpg.encrypt('filename', 'recipient', {:'trust-model' => :always})
+    end
+    
+    it "saves armored version to filename.asc" do
+      expect_command_to_match("--trust-model always")
       run_encrypt
     end
   end
@@ -143,7 +155,7 @@ describe "RubyGpg" do
     end
     
     it "issues the encrypts command for the passed recipient" do
-      expect_command_to_match("--recipient \"recipient\"")
+      expect_command_to_match("--recipient recipient")
       run_encrypt_string
     end
     

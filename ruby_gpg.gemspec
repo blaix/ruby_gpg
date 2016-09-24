@@ -52,4 +52,3 @@ Gem::Specification.new do |s|
   s.add_development_dependency(%q<cucumber>, [">= 0"])
   s.add_development_dependency(%q<mocha>, [">= 1.1.0"])
 end
-
