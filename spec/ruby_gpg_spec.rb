@@ -116,6 +116,17 @@ describe "RubyGpg" do
       run_encrypt
     end
   end
+
+  describe '.encrypt(filename, recipient, opts) with trust-model' do
+    def run_encrypt
+      RubyGpg.encrypt('filename', 'recipient', {:'trust-model' => :always})
+    end
+    
+    it "saves armored version to filename.asc" do
+      expect_command_to_match("--trust-model always")
+      run_encrypt
+    end
+  end
   
   describe '.encrypt(filename, recipient, opts) with ascii output file specified' do
     def run_encrypt

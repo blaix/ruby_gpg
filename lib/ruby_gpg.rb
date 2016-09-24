@@ -22,6 +22,7 @@ module RubyGpg
     command = gpg_command_array.dup
 
     command << '-a' if opts[:armor]
+    command << '--trust-model' << opts[:'trust-model'] if opts[:'trust-model']
     command << '--output' << output
     command << '--recipient' << recipient
     command << '--encrypt' << file
