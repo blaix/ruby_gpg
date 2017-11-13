@@ -12,7 +12,7 @@ module RubyGpg
     gpg_command_string
   end
   
-  def encrypt(file, recipient, opts = {})
+  def encrypt_multi(file, recipients, opts = {})
     options = {
       :armor => false
     }.merge(opts)
@@ -24,10 +24,16 @@ module RubyGpg
     command << '-a' if opts[:armor]
     command << '--trust-model' << opts[:'trust-model'] if opts[:'trust-model']
     command << '--output' << output
-    command << '--recipient' << recipient
+    recipients.each { |recipient|
+      command << '--recipient' << recipient
+    }
     command << '--encrypt' << file
     
     run_command(command)
+  end
+
+  def encrypt(file, recipient, opts = {})
+    encrypt_multi(file, Array(recipient), opts) 
   end
   
   # Encrypt a string from stdin
