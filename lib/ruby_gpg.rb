@@ -11,14 +11,14 @@ module RubyGpg
   def gpg_command
     gpg_command_string
   end
-  
+
   def encrypt(file, recipient, opts = {})
     options = {
       :armor => false
     }.merge(opts)
-    
+
     output = output_filename(file, options)
-    
+
     command = gpg_command_array.dup
 
     command << '-a' if opts[:armor]
@@ -26,10 +26,10 @@ module RubyGpg
     command << '--output' << output
     command << '--recipient' << recipient
     command << '--encrypt' << file
-    
+
     run_command(command)
   end
-  
+
   # Encrypt a string from stdin
   def encrypt_string(string, recipient, opts = {})
     command = gpg_command_array.dup
@@ -38,26 +38,26 @@ module RubyGpg
     command << '--recipient' << recipient
     run_command(command, string)
   end
-  
+
   def decrypt(file, passphrase = nil, opts = {})
     outfile = opts[:output].nil? ? file.gsub(/\.gpg$|\.asc$/, '') : opts[:output]
 
     command = gpg_command_array.dup
     command << '--output' << outfile
-    command << '--passphrase' << passphrase if passphrase
+    command << '--batch' << '--passphrase' << passphrase if passphrase
     command << '--decrypt' << file
 
     run_command(command)
   end
-  
+
   def decrypt_string(string, passphrase = nil)
     command = gpg_command_array.dup
-    command << '--passphrase' << passphrase if passphrase
+    command << '--batch' << '--passphrase' << passphrase if passphrase
     command << '--decrypt'
 
     run_command(command, string)
   end
-  
+
   private
 
   def gpg_command_array
@@ -75,7 +75,7 @@ module RubyGpg
   def gpg_command_string
     gpg_command_array.join(' ')
   end
-  
+
   def run_command(command, input = nil)
     opts = { binmode: true, stdin_data: input}
 
@@ -87,7 +87,7 @@ module RubyGpg
 
     output
   end
-  
+
   # Return the output filename to use
   def output_filename(file, opts)
     extension = opts[:armor] ? "asc" : "gpg"
