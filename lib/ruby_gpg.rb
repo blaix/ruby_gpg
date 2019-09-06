@@ -34,6 +34,7 @@ module RubyGpg
   def encrypt_string(string, recipient, opts = {})
     command = gpg_command_array.dup
     command << '-a' if opts[:armor]
+    command << '--trust-model' << opts[:'trust-model'] if opts[:'trust-model']
     command << '--encrypt'
     command << '--recipient' << recipient
     run_command(command, string)
