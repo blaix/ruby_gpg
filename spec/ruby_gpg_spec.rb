@@ -128,6 +128,14 @@ describe "RubyGpg" do
     end
   end
 
+  describe '.encrypt(filename, recipient) with not a string' do
+    it 'issues calls to_s on filename' do
+      expect_command_to_match('1024')
+
+      RubyGpg.encrypt(1024, 'recipient')
+    end
+  end
+
   describe '.encrypt(filename, recipient, opts) with ascii output file specified' do
     def run_encrypt
       RubyGpg.encrypt('filename', 'recipient', {:armor => true, :output => "foo.asc"})

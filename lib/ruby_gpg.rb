@@ -74,7 +74,7 @@ module RubyGpg
   end
 
   def gpg_command_string
-    gpg_command_array.join(' ')
+    gpg_command_array.map(&:to_s).join(' ')
   end
 
   def run_command(command, input = nil)
