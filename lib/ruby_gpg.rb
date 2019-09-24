@@ -70,14 +70,15 @@ module RubyGpg
       '--no-permission-warning',
       '--no-tty',
       '--yes'
-    ]
+    ].freeze
   end
 
   def gpg_command_string
-    gpg_command_array.map(&:to_s).join(' ')
+    gpg_command_array.join(' ')
   end
 
   def run_command(command, input = nil)
+    command = command.map(&:to_s) # Allows for path names and such
     opts = { binmode: true, stdin_data: input}
 
     output, error, status = Open3.capture3(*command, opts)

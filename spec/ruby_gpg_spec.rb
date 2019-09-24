@@ -234,6 +234,14 @@ describe "RubyGpg" do
     end
   end
 
+  describe '.decrypt(filename, recipient) with not a string' do
+    it 'issues calls to_s on filename' do
+      expect_command_to_match('1024')
+
+      RubyGpg.decrypt(1024, 'recipient', output: 2048)
+    end
+  end
+
   describe '.decrypt(filename) for asc file' do
     def run_decrypt(passphrase = nil, opts = {})
       RubyGpg.decrypt('filename.asc', passphrase, opts)
