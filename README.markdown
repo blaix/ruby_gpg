@@ -1,3 +1,7 @@
+# This project is archived
+
+I'm no longer maintaining this.
+
 # Ruby GPG
 
 Ruby wrapper for the `gpg` binary. You probably want to be using the
