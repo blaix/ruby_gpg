@@ -24,6 +24,9 @@ for some reason, I guess you have to settle for this.
 
     # creates /path/to/file.gpg:
     RubyGpg.encrypt("/path/to/file", "Mr. Recipient")
+    
+    # encrypt for multiple recipients 
+    RubyGpg.encrypt_multi("/path/to/file", [ "Mr. Recipient", "Miss Recipient" ])
   
     # creates /path/to/file:
     RubyGpg.decrypt("/path/to/file.gpg", "passphrase")
